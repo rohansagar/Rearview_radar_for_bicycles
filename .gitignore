@@ -6,7 +6,6 @@
 .settings/org.eclipse.cdt.codan.core.prefs
 .settings/org.eclipse.cdt.debug.core.prefs
 .settings/org.eclipse.core.resources.prefs
-blindSpot.h
 Debug/ccsObjs.opt
 Debug/drivers/cfal96x64x16.d
 Debug/drivers/cfal96x64x16.obj
@@ -37,7 +36,7 @@ Debug/tm4c123gh6pm_startup_ccs.d
 Debug/tm4c123gh6pm_startup_ccs.obj
 Debug/uDMA.d
 Debug/uDMA.obj
-main.c
+
 target_config.ccxml
 tm4c123gh6pm.cmd
 tm4c123gh6pm_startup_ccs.c
