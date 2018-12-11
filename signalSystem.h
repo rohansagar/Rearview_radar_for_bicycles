@@ -1,16 +1,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
-#include "inc/hw_types.h"
-#include "driverlib/debug.h"
+#include "inc/tm4c123gh6pm.h"
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
-#include "inc/tm4c123gh6pm.h"
 #include "driverlib/ssi.h"
 #include "driverlib/timer.h"
 
 #include "binary.h"
+#include "LEDMatrix.h"
 
 // For our testing, we will use Red for brake, blue for left, and green for right
 #define RED_LED    GPIO_PIN_1 // PF1

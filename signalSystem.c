@@ -1,4 +1,5 @@
 #include "signalSystem.h"
+#include "LEDMatrix.h"
 
 /*
  * ============== ALL VARIABLE DEFINITIONS GO HERE ==============
@@ -51,16 +52,7 @@ bool displayingBlank = false;
 
 // LED matrix
 inline void setupLights(){
-    // Enable SSI0 peripheral
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_SSI0));
-
-    // Configure SSI
-    // SSI0 uses PA2-SCK PA3-CS PA4-MISO PA5-MOSI
-    SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, 2000000, 8);
-
-    // Enable the SSI module.
-    SSIEnable(SSI0_BASE);
+    setupLEDMatrix(SSI0, 4);
 
     // Just for debugging
     setupBILEDs();
@@ -171,30 +163,31 @@ void timer0ISR(){
     }
 }
 
-void turnButtonISR(){
-    SysCtlDelay(50*ONE_MS); // Poor man's debounce
 
-    if((GPIOIntStatus(GPIO_PORTF_BASE, true) & (PUSH1 | PUSH2)) == (PUSH1 | PUSH2)){
+void turnButtonISR(){
+    SysCtlDelay((50*ONE_MS)/3); // Poor man's debounce
+
+    GPIOIntClear(GPIO_PORTF_BASE, PUSH1 | PUSH2);
+
+    if(GPIOPinRead(GPIO_PORTF_BASE, PUSH1 | PUSH2) == 0x00){
         displayBlankTurn();
         toggleSignal(hazards);
     }
-    else if(GPIOIntStatus(GPIO_PORTF_BASE, true) & PUSH1){
+    else if(GPIOPinRead(GPIO_PORTF_BASE, PUSH1) == 0x00){
         displayBlankTurn();
         toggleSignal(left);
     }
-    else if(GPIOIntStatus(GPIO_PORTF_BASE, true) & PUSH2){
+    else if(GPIOPinRead(GPIO_PORTF_BASE, PUSH2) == 0x00){
         displayBlankTurn();
         toggleSignal(right);
     }
 
-    GPIOIntClear(GPIO_PORTF_BASE, PUSH1 | PUSH2);
 }
 
 void brakeSwitchISR(){
+    SysCtlDelay((5*ONE_MS)/3); // Poor man's debounce
+
     // Falling edge turns brake light on
-
-    volatile uint32_t test = GPIOIntTypeGet(GPIO_PORTB_BASE, BRAKE_SWITCH);
-
     if (GPIOPinRead(GPIO_PORTB_BASE, BRAKE_SWITCH) == 0x00) {
         displayBrakeSignal();
     }
@@ -245,31 +238,67 @@ void toggleSignal(uint8_t signal){
 
 void displayLeftSignal(){
     GPIOPinWrite(GPIO_PORTF_BASE, BLUE_LED, BLUE_LED);
-    // Send some data.
-    /*
-    while(pcChars[i32Idx]) {
-        SSIDataPut(SSI0_BASE, pcChars[i32Idx]);
-        i32Idx++;
-    }
-    */
+    changeDisplay(leftArrow, 1);
 }
 
 void displayRightSignal(){
     GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED, GREEN_LED);
+    changeDisplay(rightArrow, 1);
 }
 
 void displayHazardSignal(){
     GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, GREEN_LED | BLUE_LED);
+
+    static bool hazardArrowsYet = false;
+    static uint8_t hazardArrows[8][4];
+
+    if(!hazardArrowsYet){
+        for (int i = 0; i<8; i++){
+            for (int j = 0; j<4; j++){
+                hazardArrows[i][j] = (leftArrow[i][j] | rightArrow[i][j]);
+            }
+        }
+        hazardArrowsYet = true;
+    }
+
+    changeDisplay(hazardArrows, 1);
 }
 
 void displayBrakeSignal(){
     GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, RED_LED);
+    changeDisplay(brakeSign, 1);
 }
 
 void displayBlankTurn(){
     GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, ~(GREEN_LED | BLUE_LED));
+
+    static bool blankArrowsYet = false;
+    static uint8_t blankArrows[8][4];
+
+    if(!blankArrowsYet){
+        for (int i = 0; i<8; i++){
+            for (int j = 0; j<4; j++){
+                blankArrows[i][j] = ~(leftArrow[i][j] | rightArrow[i][j]);
+            }
+        }
+        blankArrowsYet = true;
+    }
+    changeDisplay(blankArrows, 0);
 }
 
 void displayBlankBrake(){
     GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, ~(RED_LED));
+
+    static bool blankBrakeYet = false;
+    static uint8_t blankBrake[8][4];
+
+    if(!blankBrakeYet){
+        for (int i = 0; i<8; i++){
+            for (int j = 0; j<4; j++){
+                blankBrake[i][j] = ~(brakeSign[i][j]);
+            }
+        }
+        blankBrakeYet = true;
+    }
+    changeDisplay(blankBrake, 0);
 }
