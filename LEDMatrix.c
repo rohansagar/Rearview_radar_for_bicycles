@@ -41,14 +41,15 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
     // TODO: change this to select the port/pin you are using.
     //
     GPIOPinConfigure(GPIO_PA2_SSI0CLK);
-    GPIOPinConfigure(GPIO_PA3_SSI0FSS);
+    //GPIOPinConfigure(GPIO_PA3_SSI0FSS);
     GPIOPinConfigure(GPIO_PA4_SSI0RX);
     GPIOPinConfigure(GPIO_PA5_SSI0TX);
     GPIOPadConfigSet(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
+    GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_3);
     GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
-    SSIAdvModeSet(SSIBase, SSI_ADV_MODE_WRITE);
+    SysCtlDelay(500);
 
-    GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5 | GPIO_PIN_4 | GPIO_PIN_3 | GPIO_PIN_2);
+    GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5 | GPIO_PIN_4 | GPIO_PIN_2);
 
     // Configure SSI
     // Polarity 0, Phase 0, clock speed = 100ns
@@ -59,16 +60,21 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
     SSIEnable(SSIBase);
 
     // shutdown off, no decide, scan all
+    shutdownMode(true);
     shutdownMode(false);
+    displayTest(true);
+    displayTest(false);
     decodeMode(NODECODE);
     scanLimit(7);
-    intensity(5);
+    intensity(0x00);
     clearDisplay();
 
 }
 
 void displayTest(bool state){
     // If state = true, turn on test mode, otherwise turn it off
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    SysCtlDelay(500);
     if(state){
         for (int i = 0; i < numDisplays; i++) {
             dataPacket = (DISPTEST << 8) + 0x01;
@@ -81,43 +87,70 @@ void displayTest(bool state){
             SSIDataPut(SSIBase, dataPacket);
         }
     }
+    while(SSIBusy(SSIBase));
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    SysCtlDelay(500);
 }
 
 void scanLimit(uint8_t digits){
     // Any number 0-7, determines how many digits are scanned for
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    SysCtlDelay(500);
     for (int i = 0; i < numDisplays; i++) {
         dataPacket = (SCANLIMIT << 8) + digits;
         SSIDataPut(SSIBase, dataPacket);
     }
+    while(SSIBusy(SSIBase));
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    SysCtlDelay(500);
 }
 
 void decodeMode(uint8_t mode){
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    SysCtlDelay(500);
     for (int i = 0; i < numDisplays; i++) {
         dataPacket = (DECODE << 8) + mode;
         SSIDataPut(SSIBase, dataPacket);
     }
+    while(SSIBusy(SSIBase));
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    SysCtlDelay(500);
 }
 
 void clearDisplay(){
-    for (int currentDisp = numDisplays; currentDisp > 0; currentDisp--){
-        for(int currentRow = 0; currentRow < 8; currentRow++){
-            dataHold[currentRow][currentDisp] = 0;
+    volatile int currentRow;
+    for(currentRow = 0; currentRow < 8; currentRow++){
+        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+        SysCtlDelay(500);
+        volatile int currentDisp;
+        for (currentDisp = numDisplays-1; currentDisp >= 0; currentDisp--){
+            dataHold[currentRow][currentDisp] = 0x00;
             dataPacket = ((currentRow+1) << 8) + dataHold[currentRow][currentDisp];
             SSIDataPut(SSIBase, dataPacket);
         }
+        while(SSIBusy(SSIBase));
+        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+        SysCtlDelay(500);
     }
 }
 
 void intensity(uint8_t value){
     // Can be any number 0-15
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    SysCtlDelay(500);
     for (int i = 0; i < numDisplays; i++) {
         dataPacket = (INTENSITY << 8) + value;
         SSIDataPut(SSIBase, dataPacket);
     }
+    while(SSIBusy(SSIBase));
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    SysCtlDelay(500);
 }
 
 void shutdownMode(bool state){
     // If state = true, turn on shutdown mode, otherwise turn on normal operation
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    SysCtlDelay(500);
     if(state){
         for (int i = 0; i < numDisplays; i++) {
             dataPacket = (SHUTDOWN << 8) + 0x00;
@@ -130,24 +163,35 @@ void shutdownMode(bool state){
             SSIDataPut(SSIBase, dataPacket);
         }
     }
+    while(SSIBusy(SSIBase));
+    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    SysCtlDelay(500);
 }
 
 // Sets all LEDs on all panels
 void setDisplay(uint8_t lights[8][numDisplays]){
-    for (int currentDisp = numDisplays; currentDisp > 0; currentDisp--){
-        for(int currentRow = 0; currentRow < 8; currentRow++){
+   for(int currentRow = 0; currentRow < 8; currentRow++){
+       GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+       SysCtlDelay(500);
+       for (int currentDisp = 0; currentDisp < numDisplays; currentDisp++){
             dataHold[currentRow][currentDisp] = lights[currentRow][currentDisp];
             dataPacket = ((currentRow+1) << 8) + dataHold[currentRow][currentDisp];
             SSIDataPut(SSIBase, dataPacket);
         }
+       while(SSIBusy(SSIBase));
+       GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+       SysCtlDelay(500);
     }
+
 }
 
 // Will only modify selected LEDs on all panels
 // use setBit to select if it will change 0s or 1s
 void changeDisplay(uint8_t mask[8][numDisplays], uint8_t setBit){
-    for (int currentDisp = numDisplays; currentDisp > 0; currentDisp--){
-        for(int currentRow = 0; currentRow < 8; currentRow++){
+    for(int currentRow = 0; currentRow < 8; currentRow++){
+        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+        SysCtlDelay(500);
+        for (int currentDisp = 0; currentDisp < numDisplays; currentDisp++){
 
             // if setBit == 0, then we will change all the 0s in the mask to 0 on dataHold
             if(setBit == 0){
@@ -161,5 +205,8 @@ void changeDisplay(uint8_t mask[8][numDisplays], uint8_t setBit){
             dataPacket = ((currentRow+1) << 8) + dataHold[currentRow][currentDisp];
             SSIDataPut(SSIBase, dataPacket);
         }
+        while(SSIBusy(SSIBase));
+        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+        SysCtlDelay(500);
     }
 }

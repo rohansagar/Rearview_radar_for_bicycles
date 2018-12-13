@@ -11,8 +11,8 @@ uint8_t rightArrow[8][4] = {
             { B8(00000000), B8(00000000), B8(00000000), B8(00001000) },
             { B8(00000000), B8(00000000), B8(00000000), B8(00001100) },
             { B8(00000000), B8(00000000), B8(00000000), B8(00001110) },
-            { B8(00000000), B8(00000000), B8(00001111), B8(11111111) },
-            { B8(00000000), B8(00000000), B8(00001111), B8(11111111) },
+            { B8(00000000), B8(00000000), B8(00000000), B8(11111111) },
+            { B8(00000000), B8(00000000), B8(00000000), B8(11111111) },
             { B8(00000000), B8(00000000), B8(00000000), B8(00001110) },
             { B8(00000000), B8(00000000), B8(00000000), B8(00001100) },
             { B8(00000000), B8(00000000), B8(00000000), B8(00001000) }
@@ -22,8 +22,8 @@ uint8_t leftArrow[8][4] = {
             { B8(00010000), B8(00000000), B8(00000000), B8(00000000) },
             { B8(00110000), B8(00000000), B8(00000000), B8(00000000) },
             { B8(01110000), B8(00000000), B8(00000000), B8(00000000) },
-            { B8(11111111), B8(11110000), B8(00000000), B8(00000000) },
-            { B8(11111111), B8(11110000), B8(00000000), B8(00000000) },
+            { B8(11111111), B8(00000000), B8(00000000), B8(00000000) },
+            { B8(11111111), B8(00000000), B8(00000000), B8(00000000) },
             { B8(01110000), B8(00000000), B8(00000000), B8(00000000) },
             { B8(00110000), B8(00000000), B8(00000000), B8(00000000) },
             { B8(00010000), B8(00000000), B8(00000000), B8(00000000) }
@@ -71,7 +71,7 @@ inline void setupLightsTimer(){
     // Set the count time to 500ms
     TimerLoadSet(TIMER0_BASE, TIMER_A, 500 * ONE_MS);
 
-    // Set timer ISR (was used earlier for testing)
+    // Set timer ISR
     TimerIntRegister(TIMER0_BASE, TIMER_A, timer0ISR);
     TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 }
@@ -138,6 +138,7 @@ inline void setupButtons(){
 
 void timer0ISR(){
     TimerIntClear(TIMER0_BASE, TIMER_A);
+    postponeHibernation();
     if(signalOn){
         // This may seem like backwards logic, but if displayingBlank = true, then we will show the arrow
         // if displayingBlank = false, we will output nothing to the display
@@ -166,6 +167,7 @@ void timer0ISR(){
 
 void turnButtonISR(){
     SysCtlDelay((50*ONE_MS)/3); // Poor man's debounce
+    postponeHibernation();
 
     GPIOIntClear(GPIO_PORTF_BASE, PUSH1 | PUSH2);
 
@@ -186,6 +188,7 @@ void turnButtonISR(){
 
 void brakeSwitchISR(){
     SysCtlDelay((5*ONE_MS)/3); // Poor man's debounce
+    postponeHibernation();
 
     // Falling edge turns brake light on
     if (GPIOPinRead(GPIO_PORTB_BASE, BRAKE_SWITCH) == 0x00) {

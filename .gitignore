@@ -49,3 +49,7 @@ Debug/BikeBlindSpot.out
 Debug/BikeBlindSpot.bin
 Debug/LEDMatrix.d
 Debug/LEDMatrix.obj
+Debug/powerManagment.d
+Debug/powerManagment.obj
+Debug/ultrasonic_sensor.d
+Debug/ultrasonic_sensor.obj

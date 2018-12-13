@@ -10,6 +10,7 @@
 
 #include "binary.h"
 #include "LEDMatrix.h"
+#include "powerManagement.h"
 
 // For our testing, we will use Red for brake, blue for left, and green for right
 #define RED_LED    GPIO_PIN_1 // PF1
@@ -25,6 +26,7 @@
 extern uint8_t leftArrow[][];
 extern uint8_t rightArrow[][];
 extern uint8_t brakeSign[][];
+extern bool signalOn;
 
 void setupButtons();
 void setupLights();

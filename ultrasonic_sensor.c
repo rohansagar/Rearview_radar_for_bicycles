@@ -1,46 +1,4 @@
-
-#include <stdint.h>
-#include <stdbool.h>
-#include "stdlib.h"
-#include "inc/hw_ints.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_timer.h"
-#include "inc/hw_uart.h"
-#include "inc/hw_gpio.h"
-#include "inc/hw_pwm.h"
-#include "inc/hw_types.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/timer.h"
-#include "driverlib/gpio.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-#include "driverlib/udma.h"
-#include "driverlib/pwm.h"
-#include "driverlib/ssi.h"
-#include "driverlib/systick.h"
-#include <string.h>
-
-
-
-#define sys_trigger_port    SYSCTL_PERIPH_GPIOA
-#define trigger_port    GPIO_PORTA_BASE
-#define trigger_pin     GPIO_PIN_3
-
-#define sys_echo_port   SYSCTL_PERIPH_GPIOA
-#define echo_port   GPIO_PORTA_BASE
-#define echo_pin    GPIO_PIN_2
-
-/* Add this to startup.c
-extern inputInt(void);
-input_int, for the GPIO handler
-
-*/
-void inputInt();
-void ConfigureTimer();
-void ConfigureUART(void);
+#include "ultrasonicSensor.h"
 
 //This is to avoid doing the math everytime you do a reading
 const double temp = 1.0/80.0;
@@ -51,33 +9,29 @@ volatile uint32_t pulse=0;
 //Tells the main code if the a pulse is being read at the moment
 volatile uint8_t echowait=0;
 
+void setupUltrasonic(){
+    //Set system clock to 80Mhz
+    // Current is running at 50, should it be 80?
+    //SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
+    ConfigureUART();
+    //Configures the timer
+    ConfigureTimer();
 
+    //setting up the Trigger pin
+    SysCtlPeripheralEnable(sys_trigger_port);
+    SysCtlDelay(3);
+    GPIOPinTypeGPIOOutput(trigger_port, trigger_pin);
 
+    //setting up the Echo pin
+    SysCtlPeripheralEnable(sys_echo_port);
+    SysCtlDelay(3);
+    GPIOPinTypeGPIOInput(echo_port, echo_pin);
+    GPIOIntEnable(echo_port, echo_pin);
+    GPIOIntTypeSet(echo_port, echo_pin,GPIO_BOTH_EDGES);
+    GPIOIntRegister(echo_port,inputInt);
+}
 
-int main()
-{
- //Set system clock to 80Mhz
-  SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
-  ConfigureUART();
-  //Configures the timer
-  ConfigureTimer();
-
-  //setting up the Trigger pin
-  SysCtlPeripheralEnable(sys_trigger_port);
-  SysCtlDelay(3);
-  GPIOPinTypeGPIOOutput(trigger_port, trigger_pin);
-
-  //setting up the Echo pin
-  SysCtlPeripheralEnable(sys_echo_port);
-  SysCtlDelay(3);
-  GPIOPinTypeGPIOInput(echo_port, echo_pin);
-  GPIOIntEnable(echo_port, echo_pin);
-  GPIOIntTypeSet(echo_port, echo_pin,GPIO_BOTH_EDGES);
-  GPIOIntRegister(echo_port,inputInt);
-
-
-  while(1)
-  {
+void checkBlindSpot(){
 
     //Checks if a pulse read is in progress
     if(echowait != 1){
@@ -94,14 +48,14 @@ int main()
       pulse = pulse / 58;
 
       //Prints out the distance measured.
-      UARTprintf("distance = %2dcm \n" , pulse);
+      //UARTprintf("distance = %2dcm \n" , pulse);
     }
       //wait about 10ms until the next reading.
       SysCtlDelay(400000);
 
 
-  }
 }
+
 void inputInt(){
   //Clear interrupt flag. Since we only enabled on this is enough
   GPIOIntClear(echo_port, echo_pin);
