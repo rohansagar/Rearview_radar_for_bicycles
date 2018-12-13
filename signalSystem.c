@@ -44,6 +44,7 @@ enum signalType { left, right, hazards };
 uint8_t currentSignal;
 bool signalOn = false;
 bool displayingBlank = false;
+static uint8_t hazardArrows[8][4];
 
 
 /*
@@ -59,6 +60,12 @@ inline void setupLights(){
 
     // The timer which enables flashing turn signals
     setupLightsTimer();
+
+    for (int i = 0; i<8; i++){
+        for (int j = 0; j<4; j++){
+            hazardArrows[i][j] = (leftArrow[i][j] | rightArrow[i][j]);
+        }
+    }
 }
 
 inline void setupLightsTimer(){
@@ -251,19 +258,6 @@ void displayRightSignal(){
 
 void displayHazardSignal(){
     GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, GREEN_LED | BLUE_LED);
-
-    static bool hazardArrowsYet = false;
-    static uint8_t hazardArrows[8][4];
-
-    if(!hazardArrowsYet){
-        for (int i = 0; i<8; i++){
-            for (int j = 0; j<4; j++){
-                hazardArrows[i][j] = (leftArrow[i][j] | rightArrow[i][j]);
-            }
-        }
-        hazardArrowsYet = true;
-    }
-
     changeDisplay(hazardArrows, 1);
 }
 
@@ -274,34 +268,10 @@ void displayBrakeSignal(){
 
 void displayBlankTurn(){
     GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, ~(GREEN_LED | BLUE_LED));
-
-    static bool blankArrowsYet = false;
-    static uint8_t blankArrows[8][4];
-
-    if(!blankArrowsYet){
-        for (int i = 0; i<8; i++){
-            for (int j = 0; j<4; j++){
-                blankArrows[i][j] = ~(leftArrow[i][j] | rightArrow[i][j]);
-            }
-        }
-        blankArrowsYet = true;
-    }
-    changeDisplay(blankArrows, 0);
+    changeDisplay(hazardArrows, 0);
 }
 
 void displayBlankBrake(){
     GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, ~(RED_LED));
-
-    static bool blankBrakeYet = false;
-    static uint8_t blankBrake[8][4];
-
-    if(!blankBrakeYet){
-        for (int i = 0; i<8; i++){
-            for (int j = 0; j<4; j++){
-                blankBrake[i][j] = ~(brakeSign[i][j]);
-            }
-        }
-        blankBrakeYet = true;
-    }
-    changeDisplay(blankBrake, 0);
+    changeDisplay(brakeSign, 0);
 }

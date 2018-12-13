@@ -1,4 +1,3 @@
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "stdlib.h"
@@ -17,10 +16,6 @@
 #include "driverlib/rom_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
-#include "driverlib/udma.h"
-#include "driverlib/pwm.h"
-#include "driverlib/ssi.h"
-#include "driverlib/systick.h"
 #include <string.h>
 
 #define sys_trigger_port    SYSCTL_PERIPH_GPIOA
@@ -39,4 +34,5 @@ input_int, for the GPIO handler
 void inputInt();
 void ConfigureTimer();
 void ConfigureUART(void);
+void checkBlindSpot();
 

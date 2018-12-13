@@ -13,6 +13,8 @@
 #define SSI2    2
 #define SSI3    3
 
+#define CSPIN GPIO_PIN_3
+
 // Control register addresses
 #define NOOP        0x00
 #define D0          0x01
@@ -34,6 +36,8 @@
 #define CB0         0x01
 #define CB30        0x0F
 #define CBALL       0xFF
+
+#define ONE_MS (uint32_t)(SysCtlClockGet() / 1000) // One millisecond
 
 void setupLEDMatrix(uint8_t selectedSSI, uint8_t numDisplays);
 void displayTest(bool enableDisable);

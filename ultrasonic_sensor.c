@@ -10,9 +10,6 @@ volatile uint32_t pulse=0;
 volatile uint8_t echowait=0;
 
 void setupUltrasonic(){
-    //Set system clock to 80Mhz
-    // Current is running at 50, should it be 80?
-    //SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
     ConfigureUART();
     //Configures the timer
     ConfigureTimer();
@@ -91,8 +88,7 @@ void ConfigureTimer(){
 }
 
 
-void ConfigureUART(void)
-{
+void ConfigureUART(void) {
     // Enable the GPIO Peripheral used by the UART.
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     // Enable UART0

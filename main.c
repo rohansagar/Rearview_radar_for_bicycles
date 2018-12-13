@@ -2,8 +2,8 @@
 
 
 void setup(){
-    // Setup the system clock to run at 50 Mhz from PLL with crystal reference
-    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
+    // Setup the system clock to run at 80 Mhz from PLL with crystal reference
+    SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
 
     setupButtons();
     setupLights();

@@ -52,15 +52,15 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
     GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5 | GPIO_PIN_4 | GPIO_PIN_2);
 
     // Configure SSI
-    // Polarity 0, Phase 0, clock speed = 100ns
+    // Polarity 0, Phase 0, clock speed = 10MHz (Maximum of display is 10MHz)
+    // A full update of the display takes ~1ms
     volatile uint32_t speed = SysCtlClockGet();
-    SSIConfigSetExpClk(SSIBase, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, 100*1000, 16);
+    SSIConfigSetExpClk(SSIBase, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, 10*1000*1000, 16);
 
     // Enable the SSI module.
     SSIEnable(SSIBase);
 
     // shutdown off, no decide, scan all
-    shutdownMode(true);
     shutdownMode(false);
     displayTest(true);
     displayTest(false);
@@ -68,7 +68,6 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
     scanLimit(7);
     intensity(0x00);
     clearDisplay();
-
 }
 
 void displayTest(bool state){
@@ -195,7 +194,7 @@ void changeDisplay(uint8_t mask[8][numDisplays], uint8_t setBit){
 
             // if setBit == 0, then we will change all the 0s in the mask to 0 on dataHold
             if(setBit == 0){
-                dataHold[currentRow][currentDisp] &= mask[currentRow][currentDisp];
+                dataHold[currentRow][currentDisp] &= ~mask[currentRow][currentDisp];
             }
             // else if setBit == 1 (or higher), then we will change all the 1s in the mask to 1 on dataHold
             else if(setBit == 1){
