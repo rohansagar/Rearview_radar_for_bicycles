@@ -26,7 +26,7 @@
 #include"driverlib/uart.h"
 #include"ultrasonic_sensor.h"
 
-
+#define DISTANCE_TRESHOLD 50
 void
 ConfigureUART(void)
 {
@@ -44,6 +44,8 @@ uint32_t distance_2;
 
 int main(){
 
+
+        leds_init();
 
 
         ROM_FPULazyStackingEnable();
@@ -64,7 +66,38 @@ int main(){
         //UARTprintf("distance1 = %2dcm \n" , distance_1);
         UARTprintf("distance2= %2dcm \n" , distance_2);
 
+        if(distance_1 < DISTANCE_TRESHOLD )
+        {
+            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, GPIO_PIN_3);
+        }
+
+        else
+        {
+            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0);
+
+        }
+
+        if(distance_2 < DISTANCE_TRESHOLD)
+        {
+            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
+        }
+
+        else
+        {
+             GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0);
+        }
+
         SysCtlDelay(SysCtlClockGet()/3/5);
         }
+
+}
+
+
+void leds_init(){
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_3);
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
+
 
 }
