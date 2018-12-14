@@ -56,7 +56,7 @@ inline void setupLights(){
     setupLEDMatrix(SSI0, 4);
 
     // Just for debugging
-    setupBILEDs();
+    //setupBILEDs();
 
     // The timer which enables flashing turn signals
     setupLightsTimer();
@@ -83,6 +83,7 @@ inline void setupLightsTimer(){
     TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 }
 
+/*
 // Built in LEDs
 inline void setupBILEDs(){
     // Enable port F
@@ -92,6 +93,7 @@ inline void setupBILEDs(){
     // Enable LEDs
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, RED_LED | GREEN_LED | BLUE_LED);
 }
+*/
 
 inline void setupButtons(){
     // ===== Port F is used for built in lights and switches ====== //
@@ -247,31 +249,31 @@ void toggleSignal(uint8_t signal){
 }
 
 void displayLeftSignal(){
-    GPIOPinWrite(GPIO_PORTF_BASE, BLUE_LED, BLUE_LED);
+    //GPIOPinWrite(GPIO_PORTF_BASE, BLUE_LED, BLUE_LED);
     changeDisplay(leftArrow, 1);
 }
 
 void displayRightSignal(){
-    GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED, GREEN_LED);
+    //GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED, GREEN_LED);
     changeDisplay(rightArrow, 1);
 }
 
 void displayHazardSignal(){
-    GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, GREEN_LED | BLUE_LED);
+    //GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, GREEN_LED | BLUE_LED);
     changeDisplay(hazardArrows, 1);
 }
 
 void displayBrakeSignal(){
-    GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, RED_LED);
+    //GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, RED_LED);
     changeDisplay(brakeSign, 1);
 }
 
 void displayBlankTurn(){
-    GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, ~(GREEN_LED | BLUE_LED));
+    //GPIOPinWrite(GPIO_PORTF_BASE, GREEN_LED | BLUE_LED, ~(GREEN_LED | BLUE_LED));
     changeDisplay(hazardArrows, 0);
 }
 
 void displayBlankBrake(){
-    GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, ~(RED_LED));
+    //GPIOPinWrite(GPIO_PORTF_BASE, RED_LED, ~(RED_LED));
     changeDisplay(brakeSign, 0);
 }
