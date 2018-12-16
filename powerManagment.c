@@ -24,16 +24,16 @@ inline void setupSleep(){
 inline void setupHibernation(){
 
     // Setup a timer to countdown for hibernation
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER1));
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER3);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER3));
 
     // Set up timer to count down then restart
-    TimerConfigure(TIMER1_BASE, TIMER_CFG_ONE_SHOT);
+    TimerConfigure(TIMER3_BASE, TIMER_CFG_ONE_SHOT);
 
     // Set timer ISR
-    TimerIntRegister(TIMER1_BASE, TIMER_A, hibernateISR);
-    TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-    TimerDisable(TIMER1_BASE, TIMER_A);
+    TimerIntRegister(TIMER3_BASE, TIMER_A, hibernateISR);
+    TimerIntEnable(TIMER3_BASE, TIMER_TIMA_TIMEOUT);
+    TimerDisable(TIMER3_BASE, TIMER_A);
 
     // Enable Port D
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
@@ -64,7 +64,7 @@ inline void setupHibernation(){
 
 void postponeHibernation(){
     // If the wheel is spinning, we're just gonna wakeup the MCU from deep sleep, thus resetting the hibernation timer
-    TimerDisable(TIMER1_BASE, TIMER_A);
+    TimerDisable(TIMER3_BASE, TIMER_A);
 }
 
 void hibernateISR(){
