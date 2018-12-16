@@ -34,6 +34,7 @@ void setup()
 void loop()
 {
     checkBlindSpot();
+    SysCtlDelay(10);
     // If none of the turn signals are on, then go into deep sleep
     // We use normal sleep because the turn signals rely on a timer that
     //    gets messed up in deep sleep mode
