@@ -102,7 +102,7 @@ inline void setupButtons(){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF));
 
-    // Unlock Port F
+    //Unlock Port F
     GPIO_PORTF_LOCK_R = 0x4C4F434B;
     GPIO_PORTF_CR_R |= 0x01; // Especially PF0
 
@@ -216,24 +216,28 @@ void brakeSwitchISR(){
  * ============== ALL SIGNALING FUNCTIONS GO HERE ==============
  */
 
-void toggleSignal(uint8_t signal){
+void toggleSignal(uint8_t signal)
+{
     // If it's a different button, then make signalOn false
     if (signal != currentSignal) signalOn = false;
 
     // If we pushed the same button then turn off the signal
-    if(signalOn){
+    if(signalOn)
+    {
         TimerDisable(TIMER0_BASE, TIMER_A);
         displayBlankTurn();
         signalOn = false;
     }
 
     // If this is our first time pushing the button, turn on the signal
-    else {
+    else 
+    {
         TimerLoadSet(TIMER0_BASE, TIMER_A, SIGNAL_FLASH_RATE);
         TimerEnable(TIMER0_BASE, TIMER_A);
         signalOn = true;
         currentSignal = signal;
-        switch(signal){
+        switch(signal)
+        {
         case left:
             displayLeftSignal();
             break;
