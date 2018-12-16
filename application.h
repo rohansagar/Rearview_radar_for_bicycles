@@ -1,10 +1,13 @@
+#ifndef application_h
+#define application_h
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
-#include "inc/tm4c123gh6pm.h"
-#include "signalSystem.h"
-#include "powerManagement.h"
-#include "ultrasonicSensor.h"
+//#include "inc/tm4c123gh6pm.h"
+//#include "signalSystem.h"
+//#include "powerManagement.h"
+//#include "ultrasonicSensor.h"
 #include "inc/hw_types.h"
 #include "driverlib/debug.h"
 #include "driverlib/fpu.h"
@@ -30,18 +33,21 @@
 // PB0 will be used for the brake switch
 // PD1 will be used for the wheel sensor
 
-// @info: This is the distance limit of the ultrasonic sensor  
-#define DISTANCE_TRESHOLD 50
+// @info: This is the distance limit of the ultrasonic sensor
+#define DISTANCE_TRESHOLD 40
 
 #define SYS_BLIND_SPOT_LED_PORT_LEFT SYSCTL_PERIPH_GPIOF
 #define SYS_BLIND_SPOT_LED_PORT_RIGHT SYSCTL_PERIPH_GPIOF
 #define BASE_BLIND_SPOT_LED_PORT_LEFT GPIO_PORTF_BASE
-#define BASE_BLIND_SPOT_LED_PORT_LEFT GPIO_PORTF_BASE
-#define BLIND_SPOT_LED_PIN_LEFT GPIO_PIN_3 
-#define BLIND_SPOT_LED_PIN_LEFT GPIO_PIN_2
+#define BASE_BLIND_SPOT_LED_PORT_RIGHT GPIO_PORTF_BASE
+#define BLIND_SPOT_LED_PIN_LEFT GPIO_PIN_3
+#define BLIND_SPOT_LED_PIN_RIGHT GPIO_PIN_2
 
 void setup();
 void loop();
 void checkBlindSpot();
 void setup_blind_spot_leds();
 void ConfigureUART();
+
+
+#endif

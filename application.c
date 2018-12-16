@@ -4,7 +4,7 @@ uint32_t distance_r; // variable to store the distance measured by the right ult
 
 
 /*
-@info: this function is 
+@info: this function sets up all the necessary pins
 */
 void setup()
 {
@@ -27,24 +27,29 @@ void setup()
 
 }
 
-void loop(){
+/*
+@info : this is the function that executes repeatedly and performs distance measurement
+*/
 
+void loop()
+{
     checkBlindSpot();
     // If none of the turn signals are on, then go into deep sleep
     // We use normal sleep because the turn signals rely on a timer that
     //    gets messed up in deep sleep mode
     // SSI function is currently blocking so we don't have to worry about that
-    if(signalOn) {
-        SysCtlSleep();
-    }
-    else {
-        // Set the count time to 10 seconds
-        // 30000 is the Khz of the int oscillator being used by the deep sleep module
-        //TimerLoadSet(TIMER1_BASE, TIMER_A, 10*30000);
-        //TimerEnable(TIMER1_BASE, TIMER_A);
+    
+    // if(signalOn) {
+    //     SysCtlSleep();
+    // }
+    // else {
+    //     // Set the count time to 10 seconds
+    //     // 30000 is the Khz of the int oscillator being used by the deep sleep module
+    //     //TimerLoadSet(TIMER1_BASE, TIMER_A, 10*30000);
+    //     //TimerEnable(TIMER1_BASE, TIMER_A);
 
-        //SysCtlDeepSleep();
-    }
+    //     //SysCtlDeepSleep();
+    // }
 }
 
 int main(void) 
@@ -59,7 +64,9 @@ int main(void)
 }
 
 
-
+/*
+@info: this function calculaes the distance and displays blind spot alerts
+*/
 void checkBlindSpot()
 {
         distance_l = uss_measure_distance_1(); // measure the distance on left sensor
@@ -83,29 +90,30 @@ void checkBlindSpot()
 
 }
 
-
-
+/*
+@info: this function sets up all the pins needed for the blind spot indicator leds
+*/
 void setup_blind_spot_leds()
 {
-// Initialize the port for the left led
-if(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_LEFT))
-{
-        SysCtlPeripheralEnable(SYS_BLIND_SPOT_LED_PORT_LEFT);
-}
-//wait until it is done
-while(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_LEFT));
+    // Initialize the port for the left led
+    if(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_LEFT))
+    {
+            SysCtlPeripheralEnable(SYS_BLIND_SPOT_LED_PORT_LEFT);
+    }
+    //wait until it is done
+    while(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_LEFT));
 
-// Initialize the port for the right led
-if(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_RIGHT))
-{
-        SysCtlPeripheralEnable(SYS_BLIND_SPOT_LED_PORT_RIGHT);
-}
-//wait until it is done
-while(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_RIGHT));
+    // Initialize the port for the right led
+    if(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_RIGHT))
+    {
+            SysCtlPeripheralEnable(SYS_BLIND_SPOT_LED_PORT_RIGHT);
+    }
+    //wait until it is done
+    while(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_RIGHT));
 
-// Set the pins to output
-GPIOPinTypeGPIOOutput(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT);
-GPIOPinTypeGPIOOutput(BASE_BLIND_SPOT_LED_PORT_RIGHT, BLIND_SPOT_LED_PIN_RIGHT);
+    // Set the pins to output
+    GPIOPinTypeGPIOOutput(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT);
+    GPIOPinTypeGPIOOutput(BASE_BLIND_SPOT_LED_PORT_RIGHT, BLIND_SPOT_LED_PIN_RIGHT);
 
 }
 
