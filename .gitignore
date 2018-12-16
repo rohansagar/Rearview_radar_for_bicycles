@@ -53,3 +53,5 @@ Debug/powerManagment.d
 Debug/powerManagment.obj
 Debug/ultrasonic_sensor.d
 Debug/ultrasonic_sensor.obj
+*.obj
+*.d

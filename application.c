@@ -1,4 +1,4 @@
-#include "main.h"
+#include "application.h"
 uint32_t distance_l; // variable to store the distance measured by the left ultrasonic sensor
 uint32_t distance_r; // variable to store the distance measured by the right ultrasonic sensor
 

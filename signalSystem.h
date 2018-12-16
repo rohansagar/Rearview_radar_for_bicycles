@@ -18,7 +18,9 @@
 #define GREEN_LED  GPIO_PIN_3 // PF3
 #define PUSH1      GPIO_PIN_4 // PF4
 #define PUSH2      GPIO_PIN_0 // PF0
-#define BRAKE_SWITCH GPIO_PIN_0 // PB0
+
+#define BRAKE_PORT   GPIO_PORTE_BASE // Beware the setup function still needs manual configuration if the port is changed
+#define BRAKE_SWITCH GPIO_PIN_0 // PE0
 
 #define ONE_MS (uint32_t)(SysCtlClockGet() / 1000) // One millisecond
 #define SIGNAL_FLASH_RATE 500 * ONE_MS

@@ -122,23 +122,23 @@ inline void setupButtons(){
     // ===== Port B0 is used for the brake switch ===== //
 
     // Enable Port B
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB));
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOE));
 
     // Enable PB0 with a weak pull up
-    GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, BRAKE_SWITCH);
-    GPIOPadConfigSet(GPIO_PORTB_BASE, BRAKE_SWITCH, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
+    GPIOPinTypeGPIOInput(BRAKE_PORT, BRAKE_SWITCH);
+    GPIOPadConfigSet(BRAKE_PORT, BRAKE_SWITCH, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
 
     // Configure brake switch interrupt
     // This will trigger on both rising and falling edge
     // Rising edge will trigger the lights off
     // Falling edge will trigger the lights on
-    GPIOIntRegister(GPIO_PORTB_BASE, brakeSwitchISR);
-    GPIOIntTypeSet(GPIO_PORTB_BASE, BRAKE_SWITCH, GPIO_BOTH_EDGES);
-    GPIOIntEnable(GPIO_PORTB_BASE, BRAKE_SWITCH);
+    GPIOIntRegister(BRAKE_PORT, brakeSwitchISR);
+    GPIOIntTypeSet(BRAKE_PORT, BRAKE_SWITCH, GPIO_BOTH_EDGES);
+    GPIOIntEnable(BRAKE_PORT, BRAKE_SWITCH);
 
     // Set the brake as one of the higher priorities
-    IntPrioritySet(INT_GPIOB, 0x80);
+    IntPrioritySet(INT_GPIOE, 0x80);
 }
 
 /*
@@ -200,16 +200,16 @@ void brakeSwitchISR(){
     postponeHibernation();
 
     // Falling edge turns brake light on
-    if (GPIOPinRead(GPIO_PORTB_BASE, BRAKE_SWITCH) == 0x00) {
+    if (GPIOPinRead(BRAKE_PORT, BRAKE_SWITCH) == 0x00) {
         displayBrakeSignal();
     }
 
     // Rising edge turns the brake light off
-    if (GPIOPinRead(GPIO_PORTB_BASE, BRAKE_SWITCH) == BRAKE_SWITCH) {
+    if (GPIOPinRead(BRAKE_PORT, BRAKE_SWITCH) == BRAKE_SWITCH) {
         displayBlankBrake();
     }
 
-    GPIOIntClear(GPIO_PORTB_BASE, BRAKE_SWITCH);
+    GPIOIntClear(BRAKE_PORT, BRAKE_SWITCH);
 }
 
 /*

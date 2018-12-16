@@ -21,16 +21,18 @@
 #include "driverlib/ssi.h"
 #include "inc/hw_ssi.h"
 #include "driverlib/ssi.h"
-#include"driverlib/uart.h"
-#include"ultrasonic_sensor.h" //ultrasonic sensor library
+#include "driverlib/uart.h"
 
+#include "ultrasonic_sensor.h" //ultrasonic sensor library
+#include "signalSystem.h"
+#include "powerManagement.h"
 
 // Timer 0A reserved for turn signals
 // UART0 reserved for ??? (PA0-RX PA1-TX)
 // SSI0 reserved for matrix display ( PA2-SCK PA3-CS PA4-MISO PA5-MOSI ) PA-6 for CS bc my dumb microcontroller has a dead pin :(
 // Port F is being used for debugging purposes (built in LEDs and switches)
 // PC0 - PC3 reserved for JTAG
-// PB0 will be used for the brake switch
+// PE0 will be used for the brake switch
 // PD1 will be used for the wheel sensor
 
 // @info: This is the distance limit of the ultrasonic sensor
