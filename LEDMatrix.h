@@ -46,5 +46,5 @@ void decodeMode(uint8_t mode);
 void clearDisplay();
 void intensity(uint8_t value);
 void shutdownMode(bool state);
-void setDisplay(uint8_t lights[8][]);
-void changeDisplay(uint8_t mask[8][], uint8_t setBit);
+void setDisplay(uint8_t lights[8][4]);
+void changeDisplay(uint8_t mask[8][4], uint8_t setBit);
