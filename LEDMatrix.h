@@ -13,7 +13,7 @@
 #define SSI2    2
 #define SSI3    3
 
-#define CSPIN GPIO_PIN_3
+#define CSPIN GPIO_PIN_6
 
 // Control register addresses
 #define NOOP        0x00

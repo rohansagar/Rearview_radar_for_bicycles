@@ -44,9 +44,9 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
     //GPIOPinConfigure(GPIO_PA3_SSI0FSS);
     GPIOPinConfigure(GPIO_PA4_SSI0RX);
     GPIOPinConfigure(GPIO_PA5_SSI0TX);
-    GPIOPadConfigSet(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
-    GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_3);
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    GPIOPadConfigSet(GPIO_PORTA_BASE, CSPIN, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
+    GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, CSPIN);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
     SysCtlDelay(500);
 
     GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5 | GPIO_PIN_4 | GPIO_PIN_2);
@@ -72,7 +72,7 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
 
 void displayTest(bool state){
     // If state = true, turn on test mode, otherwise turn it off
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
     SysCtlDelay(500);
     if(state){
         for (int i = 0; i < numDisplays; i++) {
@@ -87,39 +87,39 @@ void displayTest(bool state){
         }
     }
     while(SSIBusy(SSIBase));
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
     SysCtlDelay(500);
 }
 
 void scanLimit(uint8_t digits){
     // Any number 0-7, determines how many digits are scanned for
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
     SysCtlDelay(500);
     for (int i = 0; i < numDisplays; i++) {
         dataPacket = (SCANLIMIT << 8) + digits;
         SSIDataPut(SSIBase, dataPacket);
     }
     while(SSIBusy(SSIBase));
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
     SysCtlDelay(500);
 }
 
 void decodeMode(uint8_t mode){
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
     SysCtlDelay(500);
     for (int i = 0; i < numDisplays; i++) {
         dataPacket = (DECODE << 8) + mode;
         SSIDataPut(SSIBase, dataPacket);
     }
     while(SSIBusy(SSIBase));
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
     SysCtlDelay(500);
 }
 
 void clearDisplay(){
     volatile int currentRow;
     for(currentRow = 0; currentRow < 8; currentRow++){
-        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+        GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
         SysCtlDelay(500);
         volatile int currentDisp;
         for (currentDisp = numDisplays-1; currentDisp >= 0; currentDisp--){
@@ -128,27 +128,27 @@ void clearDisplay(){
             SSIDataPut(SSIBase, dataPacket);
         }
         while(SSIBusy(SSIBase));
-        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+        GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
         SysCtlDelay(500);
     }
 }
 
 void intensity(uint8_t value){
     // Can be any number 0-15
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
     SysCtlDelay(500);
     for (int i = 0; i < numDisplays; i++) {
         dataPacket = (INTENSITY << 8) + value;
         SSIDataPut(SSIBase, dataPacket);
     }
     while(SSIBusy(SSIBase));
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
     SysCtlDelay(500);
 }
 
 void shutdownMode(bool state){
     // If state = true, turn on shutdown mode, otherwise turn on normal operation
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
     SysCtlDelay(500);
     if(state){
         for (int i = 0; i < numDisplays; i++) {
@@ -163,14 +163,14 @@ void shutdownMode(bool state){
         }
     }
     while(SSIBusy(SSIBase));
-    GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+    GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
     SysCtlDelay(500);
 }
 
 // Sets all LEDs on all panels
 void setDisplay(uint8_t lights[8][numDisplays]){
    for(int currentRow = 0; currentRow < 8; currentRow++){
-       GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+       GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
        SysCtlDelay(500);
        for (int currentDisp = 0; currentDisp < numDisplays; currentDisp++){
             dataHold[currentRow][currentDisp] = lights[currentRow][currentDisp];
@@ -178,7 +178,7 @@ void setDisplay(uint8_t lights[8][numDisplays]){
             SSIDataPut(SSIBase, dataPacket);
         }
        while(SSIBusy(SSIBase));
-       GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+       GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
        SysCtlDelay(500);
     }
 
@@ -188,7 +188,7 @@ void setDisplay(uint8_t lights[8][numDisplays]){
 // use setBit to select if it will change 0s or 1s
 void changeDisplay(uint8_t mask[8][numDisplays], uint8_t setBit){
     for(int currentRow = 0; currentRow < 8; currentRow++){
-        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0x00);
+        GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, 0x00);
         SysCtlDelay(500);
         for (int currentDisp = 0; currentDisp < numDisplays; currentDisp++){
 
@@ -205,7 +205,7 @@ void changeDisplay(uint8_t mask[8][numDisplays], uint8_t setBit){
             SSIDataPut(SSIBase, dataPacket);
         }
         while(SSIBusy(SSIBase));
-        GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3);
+        GPIOPinWrite(GPIO_PORTA_BASE, CSPIN, CSPIN);
         SysCtlDelay(500);
     }
 }
