@@ -69,7 +69,8 @@ uint32_t uss_measure_distance_1()
     {
     //Does the required pulse of 10uS
     GPIOPinWrite(trigger_port_1, trigger_pin_1, trigger_pin_1);
-    SysCtlDelay(266);
+    SysCtlDelay(SysCtlClockGet()/3/100000);
+    SysCtlDelay(3);
     GPIOPinWrite(trigger_port_1, trigger_pin_1, ~trigger_pin_1);
 
 
@@ -78,8 +79,8 @@ uint32_t uss_measure_distance_1()
     //Converts the counter value to cm.
     pulse_1 =(uint32_t)(temp * pulse_1);
     pulse_1 = pulse_1 / 58;
-    return (pulse_1);
     }
+    return (pulse_1);
 
 }
 
@@ -170,7 +171,8 @@ uint32_t uss_measure_distance_2()
     {
     //Does the required pulse of 10uS
     GPIOPinWrite(trigger_port_2, trigger_pin_2, trigger_pin_2);
-    SysCtlDelay(266);
+    SysCtlDelay(SysCtlClockGet()/3/100000);
+    SysCtlDelay(3);
     GPIOPinWrite(trigger_port_2, trigger_pin_2, ~trigger_pin_2);
 
 
@@ -179,8 +181,8 @@ uint32_t uss_measure_distance_2()
     //Converts the counter value to cm.
     pulse_2 =(uint32_t)(temp * pulse_2);
     pulse_2 = pulse_2 / 58;
-    return (pulse_2);
     }
+    return (pulse_2);
 
 }
 
@@ -198,7 +200,7 @@ void echo_int_2()
     {
         HWREG(TIMER2_BASE + TIMER_O_TAV) = 0; //Loads value 0 into the timer.
         TimerEnable(TIMER2_BASE,TIMER_A);
-        echowait_1=1;
+        echowait_2=1;
     }
     /*
     If it's a falling edge that was detected, then get the value of the counter
