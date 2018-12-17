@@ -31,11 +31,10 @@ void setup()
 
 int main(void) 
 {
-    /*
-    if(HibernateIsActive()){
-        HibernateDisable();
-    }
-    else {
+   // if(HibernateIsActive()){
+   //     HibernateDisable();
+   // }
+   // else {
         setup();
     }*/
 
