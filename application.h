@@ -18,25 +18,15 @@
 // Port F is being used for debugging purposes (built in LEDs and switches)
 
 // ===== INTERRUPT RESERVATIONS =====
-// Port A - Wheel sensor interrupts, but also UART and SSI are using it so beware
-// Port B - USS1 interrupts
-// Port C - No interrupts, but used for JTAG debugging so beware
-// Port D - USS2 interrupts
-// Port E - Brake sensor interrupts - could possibly be combined with turn signal interrupts if needed, but on board LEDs would have to be unused
-// Port F - Turn signal interrupts
-
-// ===== INTERRUPT PRIORITIES =====
-// Port A  - 0x70
-// Port B  - 0x00
-// Port C  -
-// Port D  - 0x00
-// Port E
-// Port F
-// Timer0A -
-// Timer1A -
-// Timer2A -
-// Timer3A -
-// Timer4A -
+// Port A  - Wheel sensor interrupts, but also UART and SSI are using it so beware
+// Port B  - USS1 echo interrupts
+// Port C  - No interrupts, but used for JTAG debugging so beware
+// Port D  - USS2 echo interrupts
+// Port E  - Brake sensor interrupts - could possibly be combined with turn signal interrupts if needed, but on board LEDs would have to be unused
+// Port F  - Turn signal interrupts
+// Timer0A - Turn Signal flashing
+// Timer3A - Enter hibernation
+// Timer4A - USS check
 
 // ===== OTHER RESERVATIONS =====
 // Timer 0A reserved for turn signals
@@ -47,6 +37,7 @@
 
 void setup();
 void loop();
+void set_interrupt_priorities();
 
 
 #endif

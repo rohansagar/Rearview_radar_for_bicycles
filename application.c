@@ -1,9 +1,5 @@
 #include "application.h"
 
-
-/*
-@info: this function sets up all the necessary pins
-*/
 void setup()
 {
     // Setup the system clock to run at 80 Mhz from PLL with crystal reference
@@ -13,8 +9,6 @@ void setup()
     setupLights();
     setupSleep();
     //setupHibernation();
-
-
 
     // setting up blindspot indicator leds
     setup_blind_spot_leds();
@@ -42,8 +36,40 @@ int main(void)
     setup();
     while(1)
     {
-        //timer4ISR();
-        //SysCtlSleep();
-
+        SysCtlSleep();
     }
+}
+
+void set_interrupt_priorities(){
+//    Priority table: (from highest to lowest)
+//    0, 1: USS Echo
+//    2, 3: N/A
+//    4, 5: Brake Signals
+//    6, 7: Turn signal on / off
+//    8, 9: USS check
+//    A, B: Wheel sensor
+//    C, D: Turn signal flash
+//    E, F: Hibernation
+
+    // USS1 USS2 echo
+    IntPrioritySet(INT_GPIOB, 0X00);
+    IntPrioritySet(INT_GPIOD, 0X00);
+
+    // Brake
+    IntPrioritySet(INT_GPIOE, 0x40);
+
+    // Turn Signal buttons
+    IntPrioritySet(INT_GPIOF, 0x60);
+
+    // USS Check
+    IntPrioritySet(INT_TIMER4A, 0x80);
+
+    // Wheel Sensor
+    IntPrioritySet(INT_GPIOA, 0xC0);
+
+    // Turn signal flash
+    IntPrioritySet(INT_TIMER0A, 0xA0);
+
+    // Hibernation timer
+    IntPrioritySet(INT_TIMER3A, 0xF0);
 }

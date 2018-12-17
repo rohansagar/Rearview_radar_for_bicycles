@@ -10,10 +10,6 @@
 
 #include "ultrasonic_sensor.h"
 
-
-
-
-
 //This is to avoid doing the math everytime you do a reading
 const double temp = 1.0/80.0;
 
@@ -58,6 +54,7 @@ void uss_setup_pins_1()
      GPIOIntTypeSet(echo_port_1, echo_pin_1,GPIO_BOTH_EDGES);
      GPIOIntRegister(echo_port_1,echo_int_1);
 
+     GPIOPadConfigSet(echo_port_1, echo_pin_1, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPD);
 
 }
 
@@ -68,18 +65,18 @@ uint32_t uss_measure_distance_1()
     //Checks if a pulse read is in progress
     if(echowait_1 != 1)
     {
-    //Does the required pulse of 10uS
-    GPIOPinWrite(trigger_port_1, trigger_pin_1, trigger_pin_1);
-    SysCtlDelay(SysCtlClockGet()/3/100000);
-    SysCtlDelay(3);
-    GPIOPinWrite(trigger_port_1, trigger_pin_1, ~trigger_pin_1);
+        //Does the required pulse of 10uS
+        GPIOPinWrite(trigger_port_1, trigger_pin_1, trigger_pin_1);
+        SysCtlDelay(SysCtlClockGet()/3/100000);
+        SysCtlDelay(3);
+        GPIOPinWrite(trigger_port_1, trigger_pin_1, ~trigger_pin_1);
+        echowait_1 = 1;
 
+        while(echowait_1 != 0); // wait until the echo pin goes low
 
-    while(echowait_1 != 0); // wait until the echo pin goes low
-
-    //Converts the counter value to cm.
-    pulse_1 =(uint32_t)(temp * pulse_1);
-    pulse_1 = pulse_1 / 58;
+        //Converts the counter value to cm.
+        pulse_1 =(uint32_t)(temp * pulse_1);
+        pulse_1 = pulse_1 / 58;
     }
     return (pulse_1);
 
@@ -161,6 +158,8 @@ void uss_setup_pins_2()
      GPIOIntTypeSet(echo_port_2, echo_pin_2,GPIO_BOTH_EDGES);
      GPIOIntRegister(echo_port_2,echo_int_2);
 
+     GPIOPadConfigSet(echo_port_2, echo_pin_2, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPD);
+
 }
 
 
@@ -175,10 +174,10 @@ uint32_t uss_measure_distance_2()
     SysCtlDelay(SysCtlClockGet()/3/100000);
     SysCtlDelay(3);
     GPIOPinWrite(trigger_port_2, trigger_pin_2, ~trigger_pin_2);
-
+    echowait_2 = 1;
 
     while(echowait_2 != 0); // wait until the echo pin goes low
-
+    SysCtlDelay(20);
     //Converts the counter value to cm.
     pulse_2 =(uint32_t)(temp * pulse_2);
     pulse_2 = pulse_2 / 58;
@@ -293,36 +292,29 @@ void ConfigureUART(void)
     UARTStdioConfig(0, 115200, 16000000);
 }
 
-void set_interrupt_priorities(){
-
-    IntPrioritySet(INT_GPIOB, 0X00);
-    IntPrioritySet(INT_GPIOD, 0X00);
-
-}
-
 void enable_uss_trigger_timer(){
 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4);
     SysCtlDelay(3);
     TimerConfigure(TIMER4_BASE, TIMER_CFG_PERIODIC_UP);
-    TimerLoadSet(TIMER4_BASE, TIMER_A, 300*ONE_MS);
+    TimerLoadSet(TIMER4_BASE, TIMER_A, 200*ONE_MS);
 
     // Set timer ISR
     TimerIntRegister(TIMER4_BASE, TIMER_A, timer4ISR);
     TimerIntEnable(TIMER4_BASE, TIMER_TIMA_TIMEOUT);
 
     TimerEnable(TIMER4_BASE,TIMER_A);
-
 }
 
 
 void timer4ISR(){
 
     TimerIntClear(TIMER4_BASE, TIMER_A);
-    SysCtlDelay(50);
+//    SysCtlDelay(100);
     checkBlindSpot();
-    SysCtlDelay(50);
-
+//    SysCtlDelay(100);
+//    checkBlindSpot();
+//    SysCtlDelay(100);
 
 }
 

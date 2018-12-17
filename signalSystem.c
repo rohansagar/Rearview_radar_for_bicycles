@@ -1,5 +1,9 @@
 #include "signalSystem.h"
+
 #include "LEDMatrix.h"
+#include "binary.h"
+#include "powerManagement.h"
+#include "Macros.h"
 
 /*
  * ============== ALL VARIABLE DEFINITIONS GO HERE ==============
@@ -115,8 +119,7 @@ inline void setupButtons(){
     GPIOIntTypeSet(GPIO_PORTF_BASE, PUSH1 | PUSH2, GPIO_FALLING_EDGE);
     GPIOIntEnable(GPIO_PORTF_BASE, PUSH1 | PUSH2);
 
-    // Set as lowest priority
-    IntPrioritySet(INT_GPIOF, 0xE0);
+
 
 
     // ===== Port B0 is used for the brake switch ===== //
@@ -137,8 +140,7 @@ inline void setupButtons(){
     GPIOIntTypeSet(BRAKE_PORT, BRAKE_SWITCH, GPIO_BOTH_EDGES);
     GPIOIntEnable(BRAKE_PORT, BRAKE_SWITCH);
 
-    // Set the brake as one of the higher priorities
-    IntPrioritySet(INT_GPIOE, 0x80);
+
 }
 
 /*

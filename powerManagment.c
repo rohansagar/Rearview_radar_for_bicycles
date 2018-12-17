@@ -3,19 +3,24 @@
 inline void setupSleep(){
 
     // Enable all peripherals being used, we're just putting the processor to sleep here
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOA);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOB);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOC);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOD);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOF);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOA);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOB);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOC);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOD);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOF);
+//
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI0);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI1);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI2);
+//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI3);
 
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI0);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI1);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI2);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI3);
+    SysCtlPeripheralClockGating(true);
 
     SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER0);
-    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_TIMER1);
+    SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER1);
+    SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER2);
+    SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER3);
+    SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER4);
 
     //SysCtlDeepSleepClockSet(SYSCTL_DSLP_DIV_1 | SYSCTL_DSLP_OSC_INT30);
 
@@ -53,9 +58,6 @@ inline void setupHibernation(){
     GPIOIntRegister(GPIO_PORTA_BASE, postponeHibernation);
     GPIOIntTypeSet(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN, GPIO_FALLING_EDGE);
     GPIOIntEnable(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
-
-    // Set the wheel sensor as one of the lower priorities
-    IntPrioritySet(INT_GPIOA, 0x70);
 
     // Now get the hibernation module setup
     SysCtlPeripheralEnable(SYSCTL_PERIPH_HIBERNATE);

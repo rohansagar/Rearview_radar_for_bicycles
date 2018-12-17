@@ -8,10 +8,6 @@
 #include "driverlib/ssi.h"
 #include "driverlib/timer.h"
 
-#include "binary.h"
-#include "LEDMatrix.h"
-#include "powerManagement.h"
-#include "Macros.h"
 
 // For our testing, we will use Red for brake, blue for left, and green for right
 #define RED_LED    GPIO_PIN_1 // PF1

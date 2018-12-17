@@ -1,45 +1,31 @@
 #ifndef ultrasonic_sensor_h
 #define ultrasonic_sensor_h
 
-
-
-#include <stdint.h>
 #include <stdbool.h>
-#include "stdlib.h"
-#include "inc/hw_ints.h"
-#include "inc/hw_memmap.h"
-#include "inc/hw_timer.h"
-#include "inc/hw_gpio.h"
-#include "inc/hw_pwm.h"
-#include "inc/hw_types.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/timer.h"
-#include "driverlib/gpio.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/pwm.h"
-#include "driverlib/ssi.h"
-#include "driverlib/systick.h"
+#include <stdint.h>
 #include <string.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include "inc/hw_memmap.h"
-#include "inc/hw_types.h"
 #include "driverlib/debug.h"
 #include "driverlib/fpu.h"
 #include "driverlib/gpio.h"
+#include "driverlib/interrupt.h"
 #include "driverlib/pin_map.h"
+#include "driverlib/pwm.h"
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
+#include "driverlib/ssi.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/systick.h"
+#include "driverlib/timer.h"
 #include "driverlib/uart.h"
-#include "utils/uartstdio.h"
-#include "driverlib/ssi.h"
+#include "inc/hw_gpio.h"
+#include "inc/hw_ints.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_pwm.h"
 #include "inc/hw_ssi.h"
-#include "driverlib/ssi.h"
-#include "driverlib/uart.h"
+#include "inc/hw_timer.h"
+#include "inc/hw_types.h"
+#include "utils/uartstdio.h"
+#include "stdlib.h"
 
 #include "Macros.h"
 
@@ -101,7 +87,6 @@ void uss_setup_pins_2(void);
 void checkBlindSpot();
 void setup_blind_spot_leds();
 void ConfigureUART();
-void set_interrupt_priorities();
 void enable_uss_trigger_timer();
 void timer4ISR();
 
