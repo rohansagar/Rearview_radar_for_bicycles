@@ -15,7 +15,6 @@ void setup()
     //setupHibernation();
 
 
-    set_interrupt_priorities();
 
     // setting up blindspot indicator leds
     setup_blind_spot_leds();
@@ -26,11 +25,13 @@ void setup()
 
     // Optional for Debugging 
     ConfigureUART();
+    set_interrupt_priorities();
 
 }
 
 int main(void) 
 {
+    /*
    // if(HibernateIsActive()){
    //     HibernateDisable();
    // }

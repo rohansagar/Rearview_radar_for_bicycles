@@ -305,7 +305,7 @@ void enable_uss_trigger_timer(){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4);
     SysCtlDelay(3);
     TimerConfigure(TIMER4_BASE, TIMER_CFG_PERIODIC_UP);
-    TimerLoadSet(TIMER4_BASE, TIMER_A, 1000*ONE_MS);
+    TimerLoadSet(TIMER4_BASE, TIMER_A, 300*ONE_MS);
 
     // Set timer ISR
     TimerIntRegister(TIMER4_BASE, TIMER_A, timer4ISR);
@@ -319,8 +319,9 @@ void enable_uss_trigger_timer(){
 void timer4ISR(){
 
     TimerIntClear(TIMER4_BASE, TIMER_A);
+    SysCtlDelay(50);
     checkBlindSpot();
-    SysCtlDelay(10);
+    SysCtlDelay(50);
 
 
 }
