@@ -23,6 +23,8 @@ inline void setupSleep(){
 
 inline void setupHibernation(){
 
+    // ===== Setup timer for hibernation countdown =====
+
     // Setup a timer to countdown for hibernation
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER3);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER3));
@@ -35,23 +37,25 @@ inline void setupHibernation(){
     TimerIntEnable(TIMER3_BASE, TIMER_TIMA_TIMEOUT);
     TimerDisable(TIMER3_BASE, TIMER_A);
 
-    // Enable Port D
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD));
+    // ===== Setup Port A for Wheel Sensor =====
 
-    // Enable PD1 with a weak pull up
-    GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, WHEEL_SENSOR_PIN);
-    GPIOPadConfigSet(GPIO_PORTD_BASE, WHEEL_SENSOR_PIN, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
+    // Enable Port A
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA));
+
+    // Enable PA7 with a weak pull up
+    GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
+    GPIOPadConfigSet(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
 
     // Configure wheel sensor ISR
     // We're going to stick the wheel sensor on the same port as the brake, so we will have to use the same ISR
     // See signalSystem.c for portBISR
-    GPIOIntRegister(GPIO_PORTD_BASE, postponeHibernation);
-    GPIOIntTypeSet(GPIO_PORTD_BASE, WHEEL_SENSOR_PIN, GPIO_FALLING_EDGE);
-    GPIOIntEnable(GPIO_PORTD_BASE, WHEEL_SENSOR_PIN);
+    GPIOIntRegister(GPIO_PORTA_BASE, postponeHibernation);
+    GPIOIntTypeSet(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN, GPIO_FALLING_EDGE);
+    GPIOIntEnable(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
 
-    // Set the wheel sensor as one of the higher priorities
-    IntPrioritySet(INT_GPIOD, 0x70);
+    // Set the wheel sensor as one of the lower priorities
+    IntPrioritySet(INT_GPIOA, 0x70);
 
     // Now get the hibernation module setup
     SysCtlPeripheralEnable(SYSCTL_PERIPH_HIBERNATE);
@@ -60,11 +64,12 @@ inline void setupHibernation(){
     // Turn off GPIO retention, we don't need anything on if the user isn't pedaling anywhere
     HibernateGPIORetentionDisable();
     HibernateWakeSet(HIBERNATE_WAKE_GPIO);
+    GPIOPinTypeWakeHigh(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
 }
 
 void postponeHibernation(){
     // If the wheel is spinning, we're just gonna wakeup the MCU from deep sleep, thus resetting the hibernation timer
-    TimerDisable(TIMER3_BASE, TIMER_A);
+    //TimerDisable(TIMER3_BASE, TIMER_A);
 }
 
 void hibernateISR(){

@@ -8,8 +8,9 @@
 #include "driverlib/hibernate.h"
 #include "driverlib/timer.h"
 
-#define ONE_MS (uint32_t)(SysCtlClockGet() / 1000) // One millisecond
-#define WHEEL_SENSOR_PIN    GPIO_PIN_1
+#include "macros.h"
+
+#define WHEEL_SENSOR_PIN    GPIO_PIN_7
 
 void setupSleep();
 void setupHibernation();

@@ -58,6 +58,7 @@ void uss_setup_pins_1()
      GPIOIntTypeSet(echo_port_1, echo_pin_1,GPIO_BOTH_EDGES);
      GPIOIntRegister(echo_port_1,echo_int_1);
 
+
 }
 
 
@@ -224,6 +225,104 @@ void ConfigureTimer_2()
   SysCtlDelay(3);
   TimerConfigure(TIMER2_BASE, TIMER_CFG_PERIODIC_UP);
   TimerEnable(TIMER2_BASE,TIMER_A);
+}
+
+
+/*
+@info: this function calculates the distance and displays blind spot alerts
+*/
+void checkBlindSpot()
+{
+        distance_l = uss_measure_distance_1(); // measure the distance on left sensor
+        distance_r = uss_measure_distance_2(); // measure the distance on right sensor
+
+        // OPTIONAL FOR DEBUGGING
+        UARTprintf("distance1 = %2dcm     " , distance_l);
+        UARTprintf("distance2= %2dcm \n" , distance_r);
+
+        // measure the distance and switch on leds accordingly
+        if(distance_l < DISTANCE_TRESHOLD )
+        GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT, BLIND_SPOT_LED_PIN_LEFT);
+        else
+        GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT, 0);
+        SysCtlDelay(3);
+
+        if(distance_r < DISTANCE_TRESHOLD)
+        GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_RIGHT, BLIND_SPOT_LED_PIN_RIGHT, BLIND_SPOT_LED_PIN_RIGHT );
+        else
+        GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_RIGHT, BLIND_SPOT_LED_PIN_RIGHT, 0);
+        SysCtlDelay(3);
+}
+
+/*
+@info: this function sets up all the pins needed for the blind spot indicator leds
+*/
+void setup_blind_spot_leds()
+{
+    // Initialize the port for the left led
+    if(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_LEFT))
+    {
+            SysCtlPeripheralEnable(SYS_BLIND_SPOT_LED_PORT_LEFT);
+    }
+    //wait until it is done
+    while(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_LEFT));
+
+    // Initialize the port for the right led
+    if(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_RIGHT))
+    {
+            SysCtlPeripheralEnable(SYS_BLIND_SPOT_LED_PORT_RIGHT);
+    }
+    //wait until it is done
+    while(!SysCtlPeripheralReady(SYS_BLIND_SPOT_LED_PORT_RIGHT));
+
+    // Set the pins to output
+    GPIOPinTypeGPIOOutput(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT);
+    GPIOPinTypeGPIOOutput(BASE_BLIND_SPOT_LED_PORT_RIGHT, BLIND_SPOT_LED_PIN_RIGHT);
+
+}
+
+// optional for debugging
+void ConfigureUART(void)
+{
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    ROM_GPIOPinConfigure(GPIO_PA0_U0RX);
+    ROM_GPIOPinConfigure(GPIO_PA1_U0TX);
+    ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
+    UARTStdioConfig(0, 115200, 16000000);
+}
+
+void set_interrupt_priorities(){
+
+    IntPrioritySet(INT_GPIOB, 0X00);
+    IntPrioritySet(INT_GPIOD, 0X00);
+
+}
+
+void enable_uss_trigger_timer(){
+
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4);
+    SysCtlDelay(3);
+    TimerConfigure(TIMER4_BASE, TIMER_CFG_PERIODIC_UP);
+    TimerLoadSet(TIMER4_BASE, TIMER_A, 1000*ONE_MS);
+
+    // Set timer ISR
+    TimerIntRegister(TIMER4_BASE, TIMER_A, timer4ISR);
+    TimerIntEnable(TIMER4_BASE, TIMER_TIMA_TIMEOUT);
+
+    TimerEnable(TIMER4_BASE,TIMER_A);
+
+}
+
+
+void timer4ISR(){
+
+    TimerIntClear(TIMER4_BASE, TIMER_A);
+    checkBlindSpot();
+    SysCtlDelay(10);
+
+
 }
 
 

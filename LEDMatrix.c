@@ -1,14 +1,15 @@
 #include "LEDMatrix.h"
-#define ONE_US (uint32_t)(SysCtlClockGet() / (1000*1000)) // One millisecond
+#include "Macros.h"
 
-uint32_t SSIBase, SSIPeripheral, numDisplays;
+uint32_t SSIBase, SSIPeripheral;
+const uint32_t numDisplays = 4;
 uint16_t dataPacket;
 
 // Max daisy chain is 4 panels, just for our needs
 uint8_t dataHold[8][4];
 
 inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
-    numDisplays = num;
+    //numDisplays = num;
 
     switch (selectedSSI){
     case SSI0:
@@ -38,8 +39,6 @@ inline void setupLEDMatrix(uint8_t selectedSSI, uint8_t num){
     //
     // Configure the pin muxing for SSI0 functions on port A2, A3, A4, and A5.
     // This step is not necessary if your part does not support pin muxing.
-    // TODO: change this to select the port/pin you are using.
-    //
     GPIOPinConfigure(GPIO_PA2_SSI0CLK);
     //GPIOPinConfigure(GPIO_PA3_SSI0FSS);
     GPIOPinConfigure(GPIO_PA4_SSI0RX);
