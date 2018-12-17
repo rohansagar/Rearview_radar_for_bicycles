@@ -24,7 +24,7 @@
 #include "driverlib/uart.h"
 
 #include "ultrasonic_sensor.h" //ultrasonic sensor library
-#include "signalSystem.h"
+//#include "signalSystem.h"
 #include "powerManagement.h"
 
 // ===== PIN RESERVATIONS =====

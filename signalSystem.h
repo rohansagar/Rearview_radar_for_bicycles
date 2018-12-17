@@ -25,9 +25,9 @@
 #define ONE_MS (uint32_t)(SysCtlClockGet() / 1000) // One millisecond
 #define SIGNAL_FLASH_RATE 500 * ONE_MS
 
-extern uint8_t leftArrow[8][4];
-extern uint8_t rightArrow[8][4];
-extern uint8_t brakeSign[8][4];
+extern uint8_t leftArrow[][];
+extern uint8_t rightArrow[][];
+extern uint8_t brakeSign[][];
 extern bool signalOn;
 
 void setupButtons();

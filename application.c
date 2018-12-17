@@ -11,10 +11,10 @@ void setup()
     // Setup the system clock to run at 80 Mhz from PLL with crystal reference
     SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
 
-    //setupButtons();
-    //setupLights();
-    //setupSleep();
-    //setupHibernation();
+ //   setupButtons();
+ //   setupLights();
+ //   setupSleep();
+ //   setupHibernation();
 
 
     // setting up blindspot indicator leds
@@ -34,8 +34,8 @@ void setup()
 void loop()
 {
     checkBlindSpot();
-    SysCtlDelay(10);
-    /* If none of the turn signals are on, then go into deep sleep
+    SysCtlDelay(100);
+    // If none of the turn signals are on, then go into deep sleep
     // We use normal sleep because the turn signals rely on a timer that
     //    gets messed up in deep sleep mode
     // SSI function is currently blocking so we don't have to worry about that
@@ -50,29 +50,23 @@ void loop()
     //     //TimerEnable(TIMER1_BASE, TIMER_A);
 
     //     //SysCtlDeepSleep();
-    // }*/
+    // }
 }
 
 int main(void) 
 {
-    /*
-    if(HibernateIsActive()){
-        HibernateDisable();
-    }
-    else {
+   // if(HibernateIsActive()){
+   //     HibernateDisable();
+   // }
+   // else {
         setup();
-    }*/
-
-    setup();
-    while(1)
-    {
-        loop();
-
-    }
+   // }
+    while(1) loop();
 }
 
+
 /*
-@info: this function calculates the distance and displays blind spot alerts
+@info: this function calculaes the distance and displays blind spot alerts
 */
 void checkBlindSpot()
 {
@@ -88,7 +82,7 @@ void checkBlindSpot()
         GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT, BLIND_SPOT_LED_PIN_LEFT);
         else
         GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_LEFT, BLIND_SPOT_LED_PIN_LEFT, 0);
-        SysCtlDelay(3);
+
 
         if(distance_r < DISTANCE_TRESHOLD)
         GPIOPinWrite(BASE_BLIND_SPOT_LED_PORT_RIGHT, BLIND_SPOT_LED_PIN_RIGHT, BLIND_SPOT_LED_PIN_RIGHT );        
