@@ -70,9 +70,14 @@ uint32_t uss_measure_distance_1()
         SysCtlDelay(SysCtlClockGet()/3/100000);
         SysCtlDelay(3);
         GPIOPinWrite(trigger_port_1, trigger_pin_1, ~trigger_pin_1);
+
+        // We load the timer in case we don't get a response
+        TimerLoadSet(TIMER5_BASE, TIMER_A, 50*ONE_MS);
+        TimerEnable(TIMER5_BASE, TIMER_A);
         echowait_1 = 1;
 
         while(echowait_1 != 0); // wait until the echo pin goes low
+        TimerDisable(TIMER5_BASE, TIMER_A);
 
         //Converts the counter value to cm.
         pulse_1 =(uint32_t)(temp * pulse_1);
@@ -174,9 +179,15 @@ uint32_t uss_measure_distance_2()
     SysCtlDelay(SysCtlClockGet()/3/100000);
     SysCtlDelay(3);
     GPIOPinWrite(trigger_port_2, trigger_pin_2, ~trigger_pin_2);
+
+    // We load the timer in case we don't get a response
+    TimerLoadSet(TIMER5_BASE, TIMER_A, 50*ONE_MS);
+    TimerEnable(TIMER5_BASE, TIMER_A);
     echowait_2 = 1;
 
     while(echowait_2 != 0); // wait until the echo pin goes low
+    TimerDisable(TIMER5_BASE, TIMER_A);
+
     SysCtlDelay(20);
     //Converts the counter value to cm.
     pulse_2 =(uint32_t)(temp * pulse_2);
@@ -304,20 +315,30 @@ void enable_uss_trigger_timer(){
     TimerIntEnable(TIMER4_BASE, TIMER_TIMA_TIMEOUT);
 
     TimerEnable(TIMER4_BASE,TIMER_A);
-}
 
+    setupBackupTimer();
+}
 
 void timer4ISR(){
 
     TimerIntClear(TIMER4_BASE, TIMER_A);
-//    SysCtlDelay(100);
     checkBlindSpot();
-//    SysCtlDelay(100);
-//    checkBlindSpot();
-//    SysCtlDelay(100);
-
 }
 
+void setupBackupTimer(){
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER5);
+    SysCtlDelay(3);
+    TimerConfigure(TIMER5_BASE, TIMER_CFG_ONE_SHOT);
 
+    // Set timer ISR
+    TimerIntRegister(TIMER5_BASE, TIMER_A, timer5ISR);
+    TimerIntEnable(TIMER5_BASE, TIMER_TIMA_TIMEOUT);
 
+    TimerEnable(TIMER5_BASE, TIMER_A);
+}
 
+void timer5ISR(){
+    TimerIntClear(TIMER5_BASE, TIMER_A);
+    echowait_1 = 0;
+    echowait_2 = 0;
+}

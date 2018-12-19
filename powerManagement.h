@@ -8,7 +8,7 @@
 #include "driverlib/hibernate.h"
 #include "driverlib/timer.h"
 
-#include "macros.h"
+#include "Macros.h"
 
 #define WHEEL_SENSOR_PIN    GPIO_PIN_7
 

@@ -90,6 +90,9 @@ void ConfigureUART();
 void enable_uss_trigger_timer();
 void timer4ISR();
 
+void setupBackupTimer();
+void timer5ISR();
+
 
 
 #endif

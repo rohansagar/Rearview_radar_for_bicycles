@@ -27,6 +27,7 @@
 // Timer0A - Turn Signal flashing
 // Timer3A - Enter hibernation
 // Timer4A - USS check
+// Timer5A - USS watchdog
 
 // ===== OTHER RESERVATIONS =====
 // Timer 0A reserved for turn signals
@@ -34,6 +35,7 @@
 // Timer 2A reserved for USS2
 // Timer 3A reserved for hibernation / power management
 // Timer 4A reserved for triggering USSs
+// Timer 5A reserved for USS watchdog basically
 
 void setup();
 void loop();

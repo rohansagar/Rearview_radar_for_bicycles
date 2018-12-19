@@ -8,7 +8,7 @@ void setup()
     setupButtons();
     setupLights();
     setupSleep();
-    //setupHibernation();
+    setupHibernation();
 
     // setting up blindspot indicator leds
     setup_blind_spot_leds();
@@ -25,15 +25,16 @@ void setup()
 
 int main(void) 
 {
-    /*
-   // if(HibernateIsActive()){
-   //     HibernateDisable();
-   // }
-   // else {
+    // If the hibernation clock is running, then we woke up from hibernation
+    // No need to set everything up again in that case
+    if(HibernateIsActive()){
+        HibernateDisable();
+        TimerEnable(TIMER4_BASE,TIMER_A);
+    }
+    else {
         setup();
-    }*/
+    }
 
-    setup();
     while(1)
     {
         SysCtlSleep();

@@ -1,19 +1,6 @@
 #include "powerManagement.h"
 
 inline void setupSleep(){
-
-    // Enable all peripherals being used, we're just putting the processor to sleep here
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOA);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOB);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOC);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOD);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_GPIOF);
-//
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI0);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI1);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI2);
-//    SysCtlPeripheralDeepSleepEnable(SYSCTL_PERIPH_SSI3);
-
     SysCtlPeripheralClockGating(true);
 
     SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER0);
@@ -21,9 +8,6 @@ inline void setupSleep(){
     SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER2);
     SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER3);
     SysCtlPeripheralSleepEnable(SYSCTL_PERIPH_TIMER4);
-
-    //SysCtlDeepSleepClockSet(SYSCTL_DSLP_DIV_1 | SYSCTL_DSLP_OSC_INT30);
-
 }
 
 inline void setupHibernation(){
@@ -37,10 +21,14 @@ inline void setupHibernation(){
     // Set up timer to count down then restart
     TimerConfigure(TIMER3_BASE, TIMER_CFG_ONE_SHOT);
 
+    // Use the PIOSC for this one so that it doesn't change in sleep mode
+    //TimerClockSourceSet(TIMER3_BASE, TIMER_CLOCK_PIOSC);
+
     // Set timer ISR
     TimerIntRegister(TIMER3_BASE, TIMER_A, hibernateISR);
     TimerIntEnable(TIMER3_BASE, TIMER_TIMA_TIMEOUT);
-    TimerDisable(TIMER3_BASE, TIMER_A);
+    TimerLoadSet(TIMER3_BASE, TIMER_A, 10*ONE_SEC);
+    TimerEnable(TIMER3_BASE, TIMER_A);
 
     // ===== Setup Port A for Wheel Sensor =====
 
@@ -59,24 +47,30 @@ inline void setupHibernation(){
     GPIOIntTypeSet(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN, GPIO_FALLING_EDGE);
     GPIOIntEnable(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
 
+    // ===== Setup hibernation module itself =====
+
     // Now get the hibernation module setup
     SysCtlPeripheralEnable(SYSCTL_PERIPH_HIBERNATE);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_HIBERNATE));
 
     // Turn off GPIO retention, we don't need anything on if the user isn't pedaling anywhere
     HibernateGPIORetentionDisable();
-    HibernateWakeSet(HIBERNATE_WAKE_GPIO);
-    GPIOPinTypeWakeHigh(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
+    HibernateWakeSet(HIBERNATE_WAKE_PIN);
+    //GPIOPinTypeWakeHigh(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
 }
 
 void postponeHibernation(){
-    // If the wheel is spinning, we're just gonna wakeup the MCU from deep sleep, thus resetting the hibernation timer
-    //TimerDisable(TIMER3_BASE, TIMER_A);
+    // If the wheel is spinning or a button is pushed, reset the hibernation timer
+    GPIOIntClear(GPIO_PORTA_BASE, WHEEL_SENSOR_PIN);
+    TimerLoadSet(TIMER3_BASE, TIMER_A, 10*ONE_SEC_PIOSC);
 }
 
 void hibernateISR(){
     // Here we will put the device into hibernation mode
-    SysCtlDelay(1);
+    TimerIntClear(TIMER3_BASE, TIMER_A);
+
+    // Turn off the timer for the blind spot, or else it will wake us up
+    TimerDisable(TIMER4_BASE,TIMER_A);
 
     HibernateEnableExpClk(SysCtlClockGet());
     HibernateRequest();
