@@ -61,23 +61,23 @@ void buttons_ISR()
 {
     // storing the interrupt status register
     uint32_t int_status = GPIOIntStatus(TURN_PORT_BASE, true);
-    GPIOIntClear(TURN_PORT_BASE, LEFT_TURN_PIN| RIGHT_TURN_PIN );
 
-    if( (int_status & LEFT_TURN_PIN) == LEFT_TURN_PIN)
+    if  ( (int_status & LEFT_TURN_PIN) == LEFT_TURN_PIN)
     {
         if(status.left_flash == 0)
         {
             status.left_flash = 1;
             //start flashing
-            TimerLoadSet(TIMER0_BASE, TIMER_A, blink_interval*(SysCtlClockGet()/1000));
-            TimerEnable(TIMER0_BASE, TIMER_A);
+//            TimerLoadSet(TIMER0_BASE, TIMER_A, blink_interval*(SysCtlClockGet()/1000));
+//            TimerEnable(TIMER0_BASE, TIMER_A);
+
         }
 
         else
         {
             status.left_flash = 0;
             // stop flashing
-            TimerDisable(TIMER0_BASE, TIMER_A);
+///            TimerDisable(TIMER0_BASE, TIMER_A);
             //stop the signal
             set_signal(LEFT,0);
         }
@@ -90,20 +90,32 @@ void buttons_ISR()
             {
                 status.right_flash = 1;
                 //start flashing
-                TimerLoadSet(TIMER0_BASE, TIMER_A, blink_interval*(SysCtlClockGet()/1000));
-                TimerEnable(TIMER0_BASE, TIMER_A);
+//                TimerLoadSet(TIMER0_BASE, TIMER_A, blink_interval*(SysCtlClockGet()/1000));
+//                TimerEnable(TIMER0_BASE, TIMER_A);
             }
 
             else
             {
                 status.right_flash = 0;
                 // stop flashing
-                TimerDisable(TIMER0_BASE, TIMER_A);
+//                TimerDisable(TIMER0_BASE, TIMER_A);
                 //stop the signal
                 set_signal(RIGHT,0);
             }
 
         }
+
+     if(status.right_flash == 1 || status.left_flash ==1)
+     {
+         TimerLoadSet(TIMER0_BASE, TIMER_A, blink_interval*(SysCtlClockGet()/1000));
+         TimerEnable(TIMER0_BASE, TIMER_A);
+     }
+     else{
+
+          TimerDisable(TIMER0_BASE, TIMER_A);
+     }
+
+     GPIOIntClear(TURN_PORT_BASE, LEFT_TURN_PIN| RIGHT_TURN_PIN );
 
 }
 
@@ -135,31 +147,22 @@ void stop_button_ISR()
 void timer_ISR()
 {
     TimerIntClear(TIMER_PORT_BASE, TIMER_A);
+    status.flash_status = !(status.flash_status);
 
     // If left turn signal is on
     if(status.left_flash)
     {
-        if(status.left == 1){
-            // turn it off
-            set_signal(LEFT, 0);
-        }
-        else{
-            // turn it on
-            set_signal(LEFT, 1);
-        }
+            set_signal(LEFT, status.flash_status);
+
+
     }
 
     if(status.right_flash)
     {
-        // if right turn signal is on
-        if(status.right ==1){
-            // turn it off
-            set_signal(RIGHT, 0);
+
+            set_signal(RIGHT, status.flash_status);
         }
-        else{
-            // turn it on
-            set_signal(RIGHT, 1);
-        }
-    }
+
+
 
 }

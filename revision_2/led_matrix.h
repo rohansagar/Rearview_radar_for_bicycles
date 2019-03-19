@@ -7,13 +7,7 @@
 
 #ifndef LED_MATRIX_H_
 #define LED_MATRIX_H_
-
-#include <stdint.h>
-#include <stdbool.h>
-
 #include "pin_assignments.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/pin_map.h"
 #include "driverlib/ssi.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
@@ -25,8 +19,10 @@ struct{
     bool left;
     bool left_flash;
     bool stop;
+    bool flash_status;
     uint8_t intensity;
 }status;
+
 
 
 static const uint8_t signal_array[3][8][4] =

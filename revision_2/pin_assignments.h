@@ -1,8 +1,21 @@
 /*
  *This file consists of all the pin assignment macros
   */
+#include "stdint.h"
+#include "stdbool.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_timer.h"
+#include "inc/hw_types.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/timer.h"
+#include "driverlib/pin_map.h"
+
+
+
+
+
+
 // Pin assignments for LED matrix display
 #define     SYS_SSI_PERIPH          SYSCTL_PERIPH_SSI0
 #define     SSI_PERIPH_BASE         SSI0_BASE
@@ -23,58 +36,76 @@
 // Note: Both the turn switches are on one port
 
 #define SYS_STOP_SWITCH_PORT        SYSCTL_PERIPH_GPIOE
-#define STOP_SWITCH_PORT_BASE       GPIO_PORTB_BASE
+#define STOP_SWITCH_PORT_BASE       GPIO_PORTE_BASE
 #define STOP_SWITCH_PIN             GPIO_PIN_1
 
 // Pin assignments for light flashing Timer
 #define SYS_TIMER_PORT      SYSCTL_PERIPH_TIMER0
 #define TIMER_PORT_BASE     TIMER0_BASE
 
-//Pin assignments for Ultrasonic snesors
+////Pin assignments for Ultrasonic snesors
+//
+////Base address for the ports
+//#define TRIGGER_PORT_BASE_1 GPIO_PORTB_BASE
+//#define ECHO_PORT_BASE_1    GPIO_PORTB_BASE
+//
+//// Addresses to enable the ports
+//#define SYS_TRIGGER_PORT_1   SYSCTL_PERIPH_GPIOB
+//#define SYS_ECHO_PORT_1      SYSCTL_PERIPH_GPIOB
+//
+//// Pins in the port
+//#define TRIGGER_1       GPIO_PIN_0
+//#define ECHO_1          GPIO_PIN_1
+//
+////Timer to be used to calculate the width of the echo
+//#define TIMER_USS_1     TIMER1_BASE
+//
+//// Led indicator defines
+//#define SYS_BLIND_SPOT_LED_1    SYSCTL_PERIPH_GPIOF
+//#define BLIND_SPOT_LED_1        GPIO_PORTF_BASE
+//#define BLIND_SPOT_LED_PIN_1    GPIO_PIN_3
+////-------------------------------------------------------------
+//
+////Base address for the ports
+//#define TRIGGER_PORT_BASE_2 GPIO_PORTD_BASE
+//#define ECHO_PORT_BASE_2    GPIO_PORTD_BASE
+//
+//// Addresses to enable the ports
+//#define SYS_TRIGGER_PORT_2  SYSCTL_PERIPH_GPIOD
+//#define SYS_ECHO_PORT_2     SYSCTL_PERIPH_GPIOD
+//
+//// Pins in the port
+//#define TRIGGER_2   GPIO_PIN_0
+//#define ECHO_2      GPIO_PIN_1
+//
+////Timer to be used to calculate the width of the echo
+//#define TIMER_USS_2     TIMER2_BASE
+//
+//// led indicator defines
+//#define SYS_BLIND_SPOT_LED_2    SYSCTL_PERIPH_GPIOF
+//#define BLIND_SPOT_LED_2        GPIO_PORTF_BASE
+//#define BLIND_SPOT_LED_PIN_2    GPIO_PIN_2
+//
+//// Trigger Timer
+//#define TIMER_TRIGGER   TIMER4_BASE
+//// Backup timer
+//#define TIMER_BACKUP    TIMER5_BASE
 
-//Base address for the ports
-#define TRIGGER_PORT_BASE_1 GPIO_PORTB_BASE
-#define ECHO_PORT_BASE_1    GPIO_PORTB_BASE
 
-// Addresses to enable the ports
-#define SYS_TRIGGER_PORT_1   SYSCTL_PERIPH_GPIOB
-#define SYS_ECHO_PORT_1      SYSCTL_PERIPH_GPIOB
+#define SYS_BLIND_SPOT_LED_PORT_LEFT SYSCTL_PERIPH_GPIOF
+#define SYS_BLIND_SPOT_LED_PORT_RIGHT SYSCTL_PERIPH_GPIOF
+#define BASE_BLIND_SPOT_LED_PORT_LEFT GPIO_PORTF_BASE
+#define BASE_BLIND_SPOT_LED_PORT_RIGHT GPIO_PORTF_BASE
+#define BLIND_SPOT_LED_PIN_LEFT GPIO_PIN_3
+#define BLIND_SPOT_LED_PIN_RIGHT GPIO_PIN_2
 
-// Pins in the port
-#define TRIGGER_1       GPIO_PIN_0
-#define ECHO_1          GPIO_PIN_1
 
-//Timer to be used to calculate the width of the echo
-#define TIMER_USS_1     TIMER1_BASE
 
-// Led indicator defines
-#define SYS_BLIND_SPOT_LED_1    SYSCTL_PERIPH_GPIOF
-#define BLIND_SPOT_LED_1        GPIO_PORTF_BASE
-#define BLIND_SPOT_LED_PIN_1    GPIO_PIN_3
-//-------------------------------------------------------------
+#define DISTANCE_TRESHOLD 40
+#define ONE_MS (uint32_t)(SysCtlClockGet()/1000)
 
-//Base address for the ports
-#define TRIGGER_PORT_BASE_2 GPIO_PORTD_BASE
-#define ECHO_PORT_BASE_2    GPIO_PORTD_BASE
 
-// Addresses to enable the ports
-#define SYS_TRIGGER_PORT_2  SYSCTL_PERIPH_GPIOD
-#define SYS_ECHO_PORT_2     SYSCTL_PERIPH_GPIOD
 
-// Pins in the port
-#define TRIGGER_2   GPIO_PIN_0
-#define ECHO_2      GPIO_PIN_1
-
-//Timer to be used to calculate the width of the echo
-#define TIMER_USS_2     TIMER2_BASE
-
-// led indicator defines
-#define SYS_BLIND_SPOT_LED_2    SYSCTL_PERIPH_GPIOF
-#define BLIND_SPOT_LED_2        GPIO_PORTF_BASE
-#define BLIND_SPOT_LED_PIN_2    GPIO_PIN_2
-
-// Trigger Timer
-#define TIMER_TRIGGER   TIMER4_BASE
-// Backup timer
-#define TIMER_BACKUP    TIMER5_BASE
+uint32_t distance_l; // variable to store the distance measured by the left ultrasonic sensor
+uint32_t distance_r; // variable to store the distance measured by the right ultrasonic sensor
 

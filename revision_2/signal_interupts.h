@@ -8,13 +8,13 @@
 #ifndef SIGNAL_INTERUPTS_H_
 #define SIGNAL_INTERUPTS_H_
 
-#include "led_matrix.h"
-#include "pin_assignments.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "driverlib/sysctl.h"
+#include "pin_assignments.h"
 #include "driverlib/gpio.h"
 #include "driverlib/timer.h"
+#include "led_matrix.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/uart.h"
 

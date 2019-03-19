@@ -12,8 +12,10 @@
 */
 void initialize_matrix(uint8_t intensity)
 {
+    status.flash_status =0;
+
     // saving the intensity
-    status.intensity == intensity;
+    status.intensity = intensity;
     // Enabling the SSI Peripheral 
     SysCtlPeripheralEnable(SYS_SSI_PERIPH);
     while(!SysCtlPeripheralReady(SYS_SSI_PERIPH));
