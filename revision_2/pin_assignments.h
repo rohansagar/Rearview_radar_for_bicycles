@@ -43,53 +43,33 @@
 #define SYS_TIMER_PORT      SYSCTL_PERIPH_TIMER0
 #define TIMER_PORT_BASE     TIMER0_BASE
 
-////Pin assignments for Ultrasonic snesors
-//
-////Base address for the ports
-//#define TRIGGER_PORT_BASE_1 GPIO_PORTB_BASE
-//#define ECHO_PORT_BASE_1    GPIO_PORTB_BASE
-//
-//// Addresses to enable the ports
-//#define SYS_TRIGGER_PORT_1   SYSCTL_PERIPH_GPIOB
-//#define SYS_ECHO_PORT_1      SYSCTL_PERIPH_GPIOB
-//
-//// Pins in the port
-//#define TRIGGER_1       GPIO_PIN_0
-//#define ECHO_1          GPIO_PIN_1
-//
-////Timer to be used to calculate the width of the echo
-//#define TIMER_USS_1     TIMER1_BASE
-//
-//// Led indicator defines
-//#define SYS_BLIND_SPOT_LED_1    SYSCTL_PERIPH_GPIOF
-//#define BLIND_SPOT_LED_1        GPIO_PORTF_BASE
-//#define BLIND_SPOT_LED_PIN_1    GPIO_PIN_3
-////-------------------------------------------------------------
-//
-////Base address for the ports
-//#define TRIGGER_PORT_BASE_2 GPIO_PORTD_BASE
-//#define ECHO_PORT_BASE_2    GPIO_PORTD_BASE
-//
-//// Addresses to enable the ports
-//#define SYS_TRIGGER_PORT_2  SYSCTL_PERIPH_GPIOD
-//#define SYS_ECHO_PORT_2     SYSCTL_PERIPH_GPIOD
-//
-//// Pins in the port
-//#define TRIGGER_2   GPIO_PIN_0
-//#define ECHO_2      GPIO_PIN_1
-//
-////Timer to be used to calculate the width of the echo
-//#define TIMER_USS_2     TIMER2_BASE
-//
-//// led indicator defines
-//#define SYS_BLIND_SPOT_LED_2    SYSCTL_PERIPH_GPIOF
-//#define BLIND_SPOT_LED_2        GPIO_PORTF_BASE
-//#define BLIND_SPOT_LED_PIN_2    GPIO_PIN_2
-//
-//// Trigger Timer
-//#define TIMER_TRIGGER   TIMER4_BASE
-//// Backup timer
-//#define TIMER_BACKUP    TIMER5_BASE
+// Pin definitions for ultrasonic sensors
+
+/*PIN MAP
+ *  USS 1  TRIGGER B0
+ *  USS 1  ECHO    B1
+*/
+#define sys_trigger_port_1    SYSCTL_PERIPH_GPIOB
+#define trigger_port_1        GPIO_PORTB_BASE
+#define trigger_pin_1         GPIO_PIN_0
+
+#define sys_echo_port_1       SYSCTL_PERIPH_GPIOB
+#define echo_port_1           GPIO_PORTB_BASE
+#define echo_pin_1            GPIO_PIN_1
+
+
+/*PIN MAP
+ *  USS 2  TRIGGER D0
+ *  USS 2  ECHO    D1
+*/
+#define sys_trigger_port_2    SYSCTL_PERIPH_GPIOD
+#define trigger_port_2        GPIO_PORTD_BASE
+#define trigger_pin_2         GPIO_PIN_0
+
+#define sys_echo_port_2       SYSCTL_PERIPH_GPIOD
+#define echo_port_2           GPIO_PORTD_BASE
+#define echo_pin_2            GPIO_PIN_1
+
 
 
 #define SYS_BLIND_SPOT_LED_PORT_LEFT SYSCTL_PERIPH_GPIOF
