@@ -3,6 +3,15 @@ This project is designed to improve safety in bicycles. It uses ultrasonic senso
 approachig the bike from blind spots and warns the rider by using a light indication system. In addition,
 it also acts as a lighting system providing turn and stop lights for the bike.
 
+### Contents:
+* [Design and Implementation](#design-and-implementation)
+* [Design Requirements](#design-requirements)
+* [Ultrasonic Sensor Library](#ultrasonic-sensor-library)
+* [Signaling System Library](#signaling-system-library)
+* [LED Matrix Library](#led-matrix-library)
+* [Application code](#application-code)
+* [Block Diagram](#block-diagram)
+* [Images](#images)
 
 ## Design and Implementation:
 This design’s hardware is based around the TM4C123GH6PM ARM based microcontroller in the form of a Tiva Launchpad
@@ -74,4 +83,5 @@ interrupt priorities in accordance to our plan as mentioned in paragraph three o
 will then enter a permanent while loop where if no other interrupts stop the system, it will put the processor to sleep 
 to conserve power.
 
+## Block Diagram:
 ## Images:
