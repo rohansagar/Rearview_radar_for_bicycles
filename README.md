@@ -84,4 +84,10 @@ will then enter a permanent while loop where if no other interrupts stop the sys
 to conserve power.
 
 ## Block Diagram:
+
+<img src="Images/block_diagram.png" height="400" width="500">  
+
 ## Images:
+
+<img src="Images/img_1.png" height="300" width="500">  
+<img src="Images/img_2.png" height="300" width="500">  
